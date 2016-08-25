@@ -1,0 +1,35 @@
+# Load data.
+> refine_original <- read.csv("~/EXCEL/refine_original.csv")
+> View(refine_original)
+
+
+# Make company names lowercase and correct misspellings.
+> refine_lower <- mutate(refine_original, company = tolower(company))
+> refine_clean <- mutate(refine_lower, company = replace(company, company %in% c("phlips", "phillis", "fillips", 
+"phillips", "phillps","phllips"), "philips"))
+> refine_clean <- mutate(refine_clean, company = replace(company, company %in% c("akz0", "ak zo"), "akzo"))
+> refine_clean <- mutate(refine_clean, company = replace(company, company %in% c("unilver"), "unilever"))
+
+# Separate the product code and product number into separate columns
+> refine_clean <- separate(refine_clean, Product.code...number, c("product_code", "product_number"), sep = '-', remove = TRUE)
+
+# Add Categories P for Smartphone, V for Tv, x for Laptop, and q for Tablet.
+> refine_clean <- mutate(refine_clean, product_category = product_code)
+> refine_clean <- mutate(refine_clean, product_category = replace(product_category, product_category %in% c("p"), "Smartphone"))
+> refine_clean <- mutate(refine_clean, product_category = replace(product_category, product_category %in% c("v"), "TV"))
+> refine_clean <- mutate(refine_clean, product_category = replace(product_category, product_category %in% c("x"), "Laptop"))
+> refine_clean <- mutate(refine_clean, product_category = replace(product_category, product_category %in% c("q"), "Tablet"))
+
+# Add a full address column that is a concatenation of (address, city, country)
+> refine_clean <- unite(refine_clean, full_address, c(address, city, country), sep = ", ", remove = TRUE)
+
+# Add four columns for product category and company with 0, 1 dummy variables.
+> refine_clean <- mutate(refine_clean, company, company_philips = ifelse(company == "philips", "1", "0"))
+> refine_clean <- mutate(refine_clean, company, company_philips = ifelse(company == "philips", "1", "0"))
+> refine_clean <- mutate(refine_clean, company, company_akzo = ifelse(company == "akzo", "1", "0"))
+> refine_clean <- mutate(refine_clean, company, company_van_houten = ifelse(company == "van houten", "1", "0"))
+> refine_clean <- mutate(refine_clean, company, company_unilever = ifelse(company == "unilever", "1", "0"))
+> refine_clean <- mutate(refine_clean, product_category, product_smartphone = ifelse(product_category == "Smartphone", "1", "0"))
+> refine_clean <- mutate(refine_clean, product_category, product_tv = ifelse(product_category == "TV", "1", "0"))
+> refine_clean <- mutate(refine_clean, product_category, product_laptop = ifelse(product_category == "Laptop", "1", "0"))
+> refine_clean <- mutate(refine_clean, product_category, product_tablet = ifelse(product_category == "Tablet", "1", "0")) 
